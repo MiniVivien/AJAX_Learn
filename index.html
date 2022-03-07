@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+    <button class="btnGet">按钮get</button>
+    <button class="btnGetInfo">get带参数</button>
+    <button class="btnPost">按钮post</button>
+    <button class="ajaxGet">按钮ajaxGet</button>
+    <button class="xhrGet">xhrGet</button>
+    <button class="xhrPost">xhrPost</button>
+
+    <form id="form01">
+        <input type="text" name="uname" />
+        <input type="password" name="upassoword" />
+        <button type="submit">确认</button>
+    </form>
+
+    <button class="axiosGet">axiosGet</button>
+    <button class="axiosPost">axiosPost</button>
+
+
+    <script>
+        var xhrGet = document.querySelector('.xhrGet');
+        xhrGet.addEventListener('click', function(){
+            var xhr = new XMLHttpRequest();
+            // 设置超时时间 XMLHttpRequest level2新特性
+            xhr.timeout = 3000;
+            // 超时后的处理函数
+            xhr.ontimeout = function(){
+                console.log('超时了')
+            }
+
+            xhr.open('GET','http://www.liulongbin.top:3006/api/getbooks?id=1');
+            xhr.send();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4 && xhr.status ===200){
+                    console.log(xhr.responseText)
+                }
+            }
+        })
+        var xhrPost = document.querySelector('.xhrPost');
+        xhrPost.addEventListener('click', function(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://www.liulongbin.top:3006/api/addbook');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('bookname=水&author=施&publisher=上海')
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4 && xhr.status === 200){
+                    console.log(xhr.responseText)
+                }
+            }
+        })
+        var form01 = document.querySelector('#form01');
+        form01.addEventListener('submit', function(e){
+            // 阻止默认行为
+            e.preventDefault();
+            // 创建FormData，快速获取到form01表单中的元素
+            var fd = new FormData(form01);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://www.liulongbin.top:3006/api/formdata');
+            // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(fd)
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4 && xhr.status === 200){
+                    console.log(JSON.parse(xhr.responseText))
+                }
+            }
+        })
+        
+        // axios
+        var axiosGet = document.querySelector('.axiosGet');
+        axiosGet.addEventListener('click', function(){
+            var url = 'http://www.liulongbin.top:3006/api/get';
+            var paramsObj = {name: 'nh', age: 18};
+            axios.get(url, {params: paramsObj}).then(function(res){
+                console.log(res.data)
+            })
+        })
+        var axiosPost = document.querySelector('.axiosPost');
+        axiosPost.addEventListener('click', function(){
+            var url = 'http://www.liulongbin.top:3006/api/post';
+            var dataObj = {location: '深圳', address: '南山'};
+            axios.post(url, dataObj).then(function(res){
+                console.log(res.data)
+            })
+        })
+        /* axios({
+            method: 'GET/POST',
+            url: 'url',
+            data: {postdata},
+            params: {getdata}
+        }).then(callback) */
+
+        $(function() {
+            $('.btnGet').on('click', function() {
+                $.get('http://www.liulongbin.top:3006/api/getbooks', function(res) {
+                    console.log(res)
+                })
+            });
+            $('.btnGetInfo').on('click',function(){
+                $.get('http://www.liulongbin.top:3006/api/getbooks', {id: 2}, function(res){
+                    console.log(res)
+                })
+            });
+            $('.btnPost').on('click',function(){
+                $.post('http://www.liulongbin.top:3006/api/addbook', {bookname: '水浒', author: '施耐庵', publisher: '上海'}, function(res){
+                    console.log(res)
+                })
+            })
+            $('.ajaxGet').on('click', function(){
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://www.liulongbin.top:3006/api/getbooks',
+                    data: {
+                        id: 1
+                    },
+                    success: function(res){
+                        console.log(res)
+                    }
+                })
+            })
+            
+        })
+    </script>
+</body>
+
+</html>
